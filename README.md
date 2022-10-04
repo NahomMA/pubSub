@@ -17,18 +17,19 @@ The publisher generates a message that it wants to publish and defines the topic
 
 
 
-## Requirements for this project are
-1. a little familiarity with nodejs
-2. Raspberry pi
-3. Node Package Manager installed on your computer and raspberry pi
-4. WIFI/LAN network
+## Requirements for this project are:
+### 1. Familiarity with nodejs:
+
+Node.js is an open-source, cross-platform, back-end JavaScript runtime environment that runs on a JavaScript Engine and executes JavaScript code outside a web browser, which was designed to build scalable network applications
+Visit the  Node.js website for installation and also how to get started with it.
+
+#### 2. Raspberry pi
+You can go through online searching on how to set up Raspberry pi, configure wifi and install node js on it. I have a separate GitHub repo: you can check on it. 
+
+### 3. Node Package Manager installed on your computer and raspberry pi
+  You can use either NPM or YARN for JS package management but for this specific project, I used NPM for this specific project. NPM is a package manager for the JavaScript programming language maintained by npm, Inc. npm is the default package manager for the JavaScript runtime environment Node.js. It consists of a command line client, also called npm, and an online database of public and paid-for private packages called the npm registry.
+
+### 4. WIFI/LAN network:
+I assumed your embedded device ( raspberry pi) can be a publisher or subscriber in the same network as your computer and the broker server is running on your computer. You can even access your server from the browser.
 
 
-### node js
-
-
-#### Raspberry pi
-
-### NPM
-
-### LAN network
