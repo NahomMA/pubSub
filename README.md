@@ -33,3 +33,23 @@ You can go through online searching on how to set up Raspberry pi, configure wif
 I assumed your embedded device ( raspberry pi) can be a publisher or subscriber in the same network as your computer and the broker server is running on your computer. You can even access your server from the browser.
 
 
+
+## Steps to run replicate this project
+1. Set up your Raspberrypi and install nod npm and nodejs for pubplisher/subscribers
+2. Install Node.js and NPM on your computer- which will be used to build broker server.
+3. clone the project to your local computer and move either sub.js/pub.js to your Raspberrypi
+4. On your device run npm install to intall all the packages needed for the server side application, then run either node broker.js or nodemon broker.js. 
+Please, install nodemon for to monitor your erros while coding. 
+nodemon is a tool that helps develop node. js based applications by automatically restarting the node application when file changes in the directory are detected. To use nodemon, replace the word node on the command line when executing your script.
+
+5. run  
+'''
+nodemon sub.js
+'''
+on your machine.
+6. Finally, install mqtt with npm package manager on your raspberry pi golobally and run 
+''' nodemon pub.js'''
+
+7. Check the message is from publisher (i.,e Raspberry PI ) to your your subscriber, look on your terminal which running sub.js
+
+
