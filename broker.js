@@ -14,60 +14,30 @@ const aedes = require('aedes')();
 const ws = require('websocket-stream');
 // const fs = require("fs");
 const  net= require('net');
-
-
-
-// Import the mongoose module
 const mongoose = require("mongoose");
+const connectDB=require('./config/db')
+// Import the mongoose module 
+connectDB()
+const port= process.env.PORT||4444
 
 // Define a schema
-const Schema = mongoose.Schema;
+const messageSchema = new mongoose.Schema({
+  message: String,
 
-const SomeModelSchema = new Schema({
-  name: String,
-  age: Number,
 });
 
 
-// Compile model from schema
-const SomeModel = mongoose.model("SomeModel", SomeModelSchema);
-// Set up default mongoose connection
-
-const mongoDB = "mongodb://127.0.0.1/my_database";
-mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
-
-// Get the default connection
-const db = mongoose.connection;
-
-// Bind connection to error event (to get notification of connection errors)
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
-
-SomeModel.insertMany([{name:"hhfhafha",age:20
-
-},
-{name:"asfdghjkl",age:44}]);
-SomeModel.save
-// Create an instance of model SomeModel
-const awesome_instance = new SomeModel({ name: "awesome" });
-
-// Save the new model instance, passing a callback
-awesome_instance.save((err) => {
-  if (err) return handleError(err);
-  // saved!
-});
-
-
+// model
+const PubMessage= mongoose.model("pubms", messageSchema);
 const app = express();
-
-
 const ports = {
-    mqtt : 1111,
-    wsp : 3333
+    mqtt : 1883,
+    wsp : port
     
 }
 
 
-const host = '192.168.1.69' // localhost
+const host = '192.168.1.65' // localhost
 const server=net.createServer(aedes.handle);
 server.listen(ports.mqtt, (req,res)=> {
     console.log(req);
@@ -76,7 +46,9 @@ server.listen(ports.mqtt, (req,res)=> {
 });
 var tmp;
 aedes.on("publish",(packet,client)=>{
-    tmp=packet.payload.toString()
+    tmp=new PubMessage({
+        message:packet.payload.toString(),
+      })
     console.log(tmp)
     });
 
@@ -96,10 +68,23 @@ aedes.on('publish', async function (packet, client) {
 
     
 
-app.get("/",(req,res)=>{ 
-    tmp=  JSON.parse(tmp);
-    res.send(tmp.Temperature);
-})
+app.get("/",(req,res)=>{
+    PubMessage.find({},(err)=>{       
+        PubMessage.insertOne(tmp,(err)=>{
+            if(err){
+              console.log(err)
+            }
+            else{
+              console.log("success")
+            }
+          })
+          res.redirect("/")         
+          tmp=  JSON.parse(tmp);
+          res.send(tmp.Temperature);
+        });  
+        
+
+});
 
 app.listen(ports.wsp,()=>{
 console.log("web server is running at ", ports.wsp);
