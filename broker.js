@@ -15,6 +15,11 @@ const ws = require('websocket-stream');
 // const fs = require("fs");
 const  net= require('net');
 const mongoose = require("mongoose");
+
+
+
+
+
 const connectDB=require('./config/db')
 // Import the mongoose module 
 connectDB()
@@ -30,6 +35,8 @@ const messageSchema = new mongoose.Schema({
 // model
 const PubMessage= mongoose.model("pubms", messageSchema);
 const app = express();
+app.set('view engine', 'ejs');
+app.use(express.static("public"));
 const ports = {
     mqtt : 1883,
     wsp : port
@@ -44,18 +51,29 @@ server.listen(ports.mqtt, (req,res)=> {
     console.log(`MQTT Broker running on port: ${ports.mqtt}`);
     
 });
+var pubms;
 var tmp;
 aedes.on("publish",(packet,client)=>{
-    tmp=new PubMessage({
+    tmp=packet.payload.toString();
+    pubms=new PubMessage({
         message:packet.payload.toString(),
       })
-    console.log(tmp)
+
+      PubMessage.insertMany(pubms,(err)=>{
+        if(err){
+          console.log(err)
+        }
+        else{
+          console.log("Storing Pub message to mongoDB success")
+        }
+      })
+   
     });
 
 
-aedes.on('publish', async function (packet, client) {
-    console.log(packet.payload.toString(), 'on', packet.topic, 'to broker', aedes.id)
-   })
+// aedes.on('publish', async function (packet, client) {
+//     console.log(packet.payload.toString(), 'on', packet.topic, 'to broker', aedes.id)
+//    })
 
 
 
@@ -68,21 +86,11 @@ aedes.on('publish', async function (packet, client) {
 
     
 
-app.get("/",(req,res)=>{
-    PubMessage.find({},(err)=>{       
-        PubMessage.insertOne(tmp,(err)=>{
-            if(err){
-              console.log(err)
-            }
-            else{
-              console.log("success")
-            }
-          })
-          res.redirect("/")         
-          tmp=  JSON.parse(tmp);
-          res.send(tmp.Temperature);
-        });  
-        
+app.get("/",(req,res)=>{ 
+    tmp=  JSON.parse(tmp);
+    // res.send(tmp.Temperature);   
+       
+          res.render("pubMesMoni",{dataFromPub:tmp.Temperature});
 
 });
 
